@@ -1,42 +1,42 @@
 <loading/>
 
-<div class="edit-course-form">
+<div class="edit-course-form" [formGroup]="form" >
 
-  <h3></h3>
+  <h3>{{data.title}}</h3>
 
   <div class="form-control">
-    <label>Course title:</label>
-    <input placeholder="Enter course title">
+    <label>Título do Curso:</label>
+    <input placeholder="Informe o título do curso" formControlName="title">
   </div>
 
   <div class="form-control">
-    <label>Course description:</label>
-    <textarea placeholder="Enter course description">
+    <label>Descrição do Curso:</label>
+    <textarea placeholder="Informe a descrição do curso" formControlName="longDescription">
     </textarea>
   </div>
 
   <div class="form-control">
-    <label>Course category:</label>
-    <select>
-      <option value="BEGINNER">Beginners</option>
-      <option value="INTERMEDIATE">Intermediate</option>
-      <option value="ADVANCED">Advanced</option>
+    <label>Categoria:</label>
+    <select formControlName="category">
+      <option value="BEGINNER">Iniciante</option>
+      <option value="INTERMEDIATE">Intermediário</option>
+      <option value="ADVANCED">Avançado</option>
     </select>
   </div>
 
   <div class="form-control">
-    <label>Course image:</label>
-    <input placeholder="Enter course title">
+    <label>Imagem do Curso:</label>
+    <input placeholder="Informe a imagem do curso" formControlName="iconUrl">
   </div>
 
   <div class="form-actions">
 
-    <button class="btn">
-      Save
+    <button class="btn" (click)="onSave()">
+      Gravar
     </button>
 
     <button class="btn" (click)="onClose()">
-      Cancel
+      Cancelar
     </button>
 
   </div>

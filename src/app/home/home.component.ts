@@ -8,6 +8,7 @@ import {MessagesService} from "../messages/messages.service";
 import {catchError, from, throwError} from "rxjs";
 import {toObservable, toSignal, outputToObservable, outputFromObservable} from "@angular/core/rxjs-interop";
 import { CoursesServiceWithFetch } from '../services/courses-fetch.service';
+import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.component';
 
 type Counter = {
   value: number
@@ -26,6 +27,7 @@ type Counter = {
 export class HomeComponent  implements OnInit {
 
   courseService = inject(CoursesService);
+  dialog = inject(MatDialog);
 
   #courses = signal<Course[]>([])
 
@@ -63,4 +65,49 @@ export class HomeComponent  implements OnInit {
 
   }
 
+  onCourseUpadted(updatedCourse: Course){
+
+    const courses = this.#courses();
+
+    const newCourses = courses.map(c =>
+      c.id === updatedCourse.id ? updatedCourse : c
+    );
+
+    this.#courses.set(newCourses);
+  }
+
+  async onCouseDeleted(courseId: string){
+
+    try{
+      await this.courseService.deleteCourse(courseId);
+
+      const courses = this.#courses();
+      const newCourses = courses.filter(c => c.id !== courseId);
+      this.#courses.set(newCourses);
+    }
+    catch(err){
+      console.error(err);
+      alert('Erro ao exlcuir o curso');
+    }
+
+  }
+
+  async onAddCourse(){
+
+    const newCourse = await openEditCourseDialog(
+      this.dialog,
+      {
+        mode: "create",
+        title: "Criar novo curso"
+      });
+
+      const newCourses = [
+        ...this.#courses(),
+        newCourse
+      ];
+      this.#courses.set(newCourses);
+  }
+
 }
+
+

@@ -23,12 +23,66 @@ import { firstValueFrom } from 'rxjs';
 export class EditCourseDialogComponent {
 
   dialogRef = inject(MatDialogRef);
+  data: EditCourseDialogData = inject(MAT_DIALOG_DATA);
+  courseService = inject(CoursesService);
+
+  fb = inject(FormBuilder);
+  form = this.fb.group({
+    title: [''],
+    longDescription: [''],
+    category: [''],
+    iconUrl: ['']
+  });
+
+  constructor(){
+
+    this.form.patchValue({
+      title: this.data?.course?.title,
+      longDescription: this.data?.course?.longDescription,
+      category: this.data?.course?.category,
+      iconUrl: this.data?.course?.iconUrl
+    });
+
+  }
 
   onClose() {
     this.dialogRef.close({result: "Cancel"});
   }
 
+  async onSave(){
+    const courseProps = this.form.value as Partial<Course>;
+    if(this.data.mode === 'update'){
+      this.saveCourse(this.data?.course!.id, courseProps);
+    } else if(this.data.mode === "create"){
+      await this.createCourse(courseProps);
+    }
+  }
+
+  async saveCourse(courseID: string, changes: Partial<Course>){
+    try{
+      const updatedCourse = await this.courseService.saveCourse(courseID, changes);
+      this.dialogRef.close(updatedCourse);
+    }
+    catch(err){
+      console.error(err);
+      alert('Erro ao gravar o curso');
+    }
+  }
+
+  async createCourse(course: Partial<Course>){
+    try{
+      const newCourse = this.courseService.createCourse(course);
+      this.dialogRef.close(newCourse);
+    }
+    catch(err){
+      console.log(err);
+      alert('Erro ao criar o curso');
+    }
+  }
+
 }
+
+
 
 export async function openEditCourseDialog(dialog: MatDialog, data: EditCourseDialogData){
 

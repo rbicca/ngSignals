@@ -15,6 +15,8 @@ import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.c
 export class CoursesCardListComponent {
 
   courses = input.required<Course[]>();
+  courseUpdated = output<Course>();
+  courseDeleted = output<string>();
 
   dialog = inject(MatDialog);
 
@@ -27,6 +29,12 @@ export class CoursesCardListComponent {
     });
 
     console.log('Alterado ', newCourseValue);
+    this.courseUpdated.emit(newCourseValue);
+
+  }
+
+  onCourseDelete(course: Course){
+    this.courseDeleted.emit(course.id);
   }
 
 }
